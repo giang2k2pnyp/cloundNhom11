@@ -76,6 +76,7 @@ if (isset($_POST['action'])) {
         $gia = $_POST['gia'];
 
         // Xử lý upload hình ảnh
+        $servername = "database-clound.database.windows.net";
         $target_dir = "uploads/"; 
         $target_file = $target_dir . basename($_FILES["img"]["name"]);
         $uploadOk = 1;
