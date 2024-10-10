@@ -161,7 +161,7 @@ if ($stmt) {
 
     
 <div class="container mt-3 mb-3">
-<h2 style="color: #03efd1;font-size: -webkit-xxx-large;
+  <h2 style="color: #03efd1;font-size: -webkit-xxx-large;
     font-family: cursive;">Book Book</h2>
     <div>
         <div class="nav nav-tabs" role="tablist">
@@ -169,8 +169,8 @@ if ($stmt) {
             <button id="showAddBtn" class="nav-link" >Thêm mới</button>
         </div>
     
-  <div id="listForm" class="form-container active ">
-    <table class="table text-center w-100">
+    <div id="listForm" class="form-container active ">
+      <table class="table text-center w-100">
         <tr>
             <th>STT</th>
             <th>Tên sản phẩm</th>
@@ -179,10 +179,10 @@ if ($stmt) {
             <th>Giá</th>
             <th>Xóa</th>
         </tr>
-        <?php
-        $i = 1;
-        while($row = $result->fetch_assoc()) {
-            ?>
+          <?php
+          $i = 1;
+          while($row = $result->fetch_assoc()) {
+          ?>
         <tr style="vertical-align: middle;">
             <td><?php echo $i++ ?></td>
             <td><?php echo $row['tensach'] ?></td>
@@ -200,47 +200,47 @@ if ($stmt) {
         <?php
         }
         ?>
-    </table>
-  </div>
+      </table>
+    </div>
 
-<div id="addForm" class="form-container p-3">
-    <form method="post" enctype="multipart/form-data">
+    <div id="addForm" class="form-container p-3">
+      <form method="post" enctype="multipart/form-data">
         <input type='hidden' name='action' value='add'>
-        <div class="form-group">
+          <div class="form-group">
             <p>Tên Sách</p>
             <input
                 class="form-control"
                 type="text"
                 name="tensach"  <!-- Thay đổi tên biến ở đây -->
             />
-        </div>
-        <div class="form-group">
+          </div>
+          <div class="form-group">
             <p>Hình ảnh</p>
             <input
                 class="form-control"
                 type="file"
                 name="img"
             />
-        </div>
-        <div class="form-group">
+          </div>
+          <div class="form-group">
             <p>Tên tác giả</p>
             <input
                 class="form-control"
                 type="text"
                 name="tacgia"  <!-- Thay đổi tên biến ở đây -->
             />
-        </div>
-        <div class="form-group">
+          </div>
+          <div class="form-group">
             <p>Giá</p>
             <input
                 class="form-control"
                 type="text"
                 name="gia"  <!-- Thay đổi tên biến ở đây -->
             />
-        </div>
+          </div>
         <input class="btn-input" type="submit" value="Thêm" style="margin-top: 20px; padding: 10px 20px" />
-    </form>
-</div>
+      </form>
+    </div>
   </div>
 </div>
 
