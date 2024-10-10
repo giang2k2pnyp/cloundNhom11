@@ -128,7 +128,7 @@ if ($action == 'add') {
 <?php
 // Xóa sản phẩm
 if ($action == 'delete') {
-    $id = $_POST['id'];
+    $id = $_POST['id_book'];
 
     // Tạo truy vấn DELETE với SQL Server
     $sql = "DELETE FROM book WHERE id_book = ?";
