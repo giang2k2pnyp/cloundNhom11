@@ -76,9 +76,9 @@ if (isset($_POST['action'])) {
 <?php
 // Thêm sản phẩm
 if ($action == 'add') {
-    $ten_san_pham = $_POST['tensach'];
-    $tacgia = $_POST['tacgia'];
-    $gia = $_POST['gia'];
+    $ten_san_pham = $_POST['nameBook'];
+    $tacgia = $_POST['nameTG'];
+    $gia = $_POST['price'];
 
     // Xử lý upload hình ảnh
     $target_dir = "uploads/"; 
