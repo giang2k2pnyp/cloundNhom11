@@ -165,8 +165,8 @@ if ($stmt) {
     font-family: cursive;">Book Book</h2>
     <div>
         <div class="nav nav-tabs" role="tablist">
-            <button id="showListBtn" class="nav-link active" data-toggle="tab">Danh sách </button>
-            <button id="showAddBtn" class="nav-link" data-toggle="tab">Thêm mới</button>
+            <button id="showListBtn" class="nav-link active" >Danh sách </button>
+            <button id="showAddBtn" class="nav-link" >Thêm mới</button>
         </div>
     
   <div id="listForm" class="form-container active ">
