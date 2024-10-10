@@ -44,7 +44,4 @@
   }
 </style>
 <script src="notification.js"></script>
-
-
-
 </head>
