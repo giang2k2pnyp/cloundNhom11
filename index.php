@@ -180,8 +180,11 @@ if ($stmt) {
             <th>Xóa</th>
         </tr>
           <?php
-          $i = 1;
-          while($row = $result->fetch_assoc()) {
+            $sql = "SELECT * FROM book"; // Thêm truy vấn ở đây
+            $stmt = sqlsrv_query($conn, $sql);
+            $i = 1;
+            if ($stmt) {
+              while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
           ?>
         <tr style="vertical-align: middle;">
             <td><?php echo $i++ ?></td>
