@@ -50,7 +50,7 @@
 </head>
 <body>
 
-    <?php 
+<?php 
 
 $servername = "database-clound.database.windows.net"; // SQL Server thường là localhost hoặc tên server cụ thể
 $username = "clound"; // Thông thường là 'sa' hoặc tài khoản khác
@@ -69,79 +69,73 @@ if (isset($_POST['action'])) {
     $action = $_POST['action'];
     
     // Xử lý các hành động tương tự như trong code MySQL
-}
-?>
+    // Thêm sản phẩm
+    if ($action == 'add') {
+        $ten_san_pham = $_POST['tensach'];
+        $tacgia = $_POST['tacgia'];
+        $gia = $_POST['gia'];
 
-    
-<?php
-// Thêm sản phẩm
-if ($action == 'add') {
-    $ten_san_pham = $_POST['nameBook'];
-    $tacgia = $_POST['nameTG'];
-    $gia = $_POST['price'];
+        // Xử lý upload hình ảnh
+        $target_dir = "uploads/"; 
+        $target_file = $target_dir . basename($_FILES["img"]["name"]);
+        $uploadOk = 1;
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-    // Xử lý upload hình ảnh
-    $target_dir = "uploads/"; 
-    $target_file = $target_dir . basename($_FILES["img"]["name"]);
-    $uploadOk = 1;
-    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        // Kiểm tra kích thước file
+        if ($_FILES["img"]["size"] > 500000) {
+            echo "<script> showNotification('Dung lượng file quá lớn!','error'); </script>";
+            $uploadOk = 0;
+        }
 
-    // Kiểm tra kích thước file
-    if ($_FILES["img"]["size"] > 500000) {
-        echo "<script> showNotification('Dung lượng file quá lớn!','error'); </script>";
-        $uploadOk = 0;
-    }
+        // Cho phép các định dạng file nhất định
+        if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+            echo "<script> showNotification('Định dạng file không hợp lệ!','error'); </script>";
+            $uploadOk = 0;
+        }
 
-    // Cho phép các định dạng file nhất định
-    if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-        echo "<script> showNotification('Định dạng file không hợp lệ!','error'); </script>";
-        $uploadOk = 0;
-    }
-
-    // Kiểm tra nếu $uploadOk = 0 thì có lỗi xảy ra
-    if ($uploadOk == 0) {
-        echo "Sorry, your file was not uploaded.";
-    } else {
-        // Nếu mọi thứ đều ổn, thử upload file
-        if (move_uploaded_file($_FILES["img"]["tmp_name"], $target_file)) {
-            // Tạo truy vấn INSERT với SQL Server sử dụng prepared statement
-            $sql = "INSERT INTO book (tensach, img, tacgia, gia) VALUES (?, ?, ?, ?)";
-            $params = array($ten_san_pham, $target_file, $tacgia, $gia);
-
-            // Chuẩn bị câu truy vấn
-            $stmt = sqlsrv_query($conn, $sql, $params);
-
-            // Kiểm tra xem truy vấn có thực thi thành công không
-            if ($stmt) {
-                echo "<script> showNotification('Thêm sản phẩm thành công!'); </script>";
-            } else {
-                echo "<script> showNotification('Thêm sản phẩm thất bại!', 'error'); </script>";
-                print_r(sqlsrv_errors()); // In ra lỗi nếu có
-            }
+        // Kiểm tra nếu $uploadOk = 0 thì có lỗi xảy ra
+        if ($uploadOk == 0) {
+            echo "Sorry, your file was not uploaded.";
         } else {
-            echo "<script> showNotification('Lỗi khi upload file!','error'); </script>";
+            // Nếu mọi thứ đều ổn, thử upload file
+            if (move_uploaded_file($_FILES["img"]["tmp_name"], $target_file)) {
+                // Tạo truy vấn INSERT với SQL Server sử dụng prepared statement
+                $sql = "INSERT INTO book (tensach, img, tacgia, gia) VALUES (?, ?, ?, ?)";
+                $params = array($ten_san_pham, $target_file, $tacgia, $gia);
+
+                // Chuẩn bị câu truy vấn
+                $stmt = sqlsrv_query($conn, $sql, $params);
+
+                // Kiểm tra xem truy vấn có thực thi thành công không
+                if ($stmt) {
+                    echo "<script> showNotification('Thêm sản phẩm thành công!'); </script>";
+                } else {
+                    echo "<script> showNotification('Thêm sản phẩm thất bại!', 'error'); </script>";
+                    print_r(sqlsrv_errors()); // In ra lỗi nếu có
+                }
+            } else {
+                echo "<script> showNotification('Lỗi khi upload file!','error'); </script>";
+            }
         }
     }
-}
-?>
 
-<?php
-// Xóa sản phẩm
-if ($action == 'delete') {
-    $id = $_POST['id_book'];
+    // Xóa sản phẩm
+    if ($action == 'delete') {
+        $id = $_POST['id_book'];
 
-    // Tạo truy vấn DELETE với SQL Server
-    $sql = "DELETE FROM book WHERE id_book = ?";
-    $params = array($id);
+        // Tạo truy vấn DELETE với SQL Server
+        $sql = "DELETE FROM book WHERE id_book = ?";
+        $params = array($id);
 
-    // Chuẩn bị và thực thi câu truy vấn
-    $stmt = sqlsrv_query($conn, $sql, $params);
+        // Chuẩn bị và thực thi câu truy vấn
+        $stmt = sqlsrv_query($conn, $sql, $params);
 
-    if ($stmt) {
-        echo "<script> showNotification('Xóa sản phẩm thành công!', 'warning'); </script>";
-    } else {
-        echo "<script> showNotification('Lỗi khi xóa sản phẩm!', 'error'); </script>";
-        print_r(sqlsrv_errors()); // In ra lỗi nếu có
+        if ($stmt) {
+            echo "<script> showNotification('Xóa sản phẩm thành công!', 'warning'); </script>";
+        } else {
+            echo "<script> showNotification('Lỗi khi xóa sản phẩm!', 'error'); </script>";
+            print_r(sqlsrv_errors()); // In ra lỗi nếu có
+        }
     }
 }
 
@@ -164,7 +158,6 @@ if ($stmt) {
     print_r(sqlsrv_errors()); // In ra lỗi nếu có
 }
 ?>
-
 
     
 <div class="container mt-3 mb-3">
@@ -210,15 +203,15 @@ if ($stmt) {
     </table>
   </div>
 
-  <div id="addForm" class="form-container  p-3">
+<div id="addForm" class="form-container p-3">
     <form method="post" enctype="multipart/form-data">
-    <input type='hidden' name='action' value='add'>
+        <input type='hidden' name='action' value='add'>
         <div class="form-group">
-            <p >Tên Sách</p>
+            <p>Tên Sách</p>
             <input
                 class="form-control"
                 type="text"
-                name="nameBook"
+                name="tensach"  <!-- Thay đổi tên biến ở đây -->
             />
         </div>
         <div class="form-group">
@@ -234,7 +227,7 @@ if ($stmt) {
             <input
                 class="form-control"
                 type="text"
-                name="nameTG"
+                name="tacgia"  <!-- Thay đổi tên biến ở đây -->
             />
         </div>
         <div class="form-group">
@@ -242,12 +235,12 @@ if ($stmt) {
             <input
                 class="form-control"
                 type="text"
-                name="price"
+                name="gia"  <!-- Thay đổi tên biến ở đây -->
             />
         </div>
-      <input class="btn-input" type="submit" value="Thêm" style="margin-top: 20px; padding: 10px 20px" />
+        <input class="btn-input" type="submit" value="Thêm" style="margin-top: 20px; padding: 10px 20px" />
     </form>
-  </div>
+</div>
   </div>
 </div>
 
