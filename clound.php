@@ -48,6 +48,11 @@
   
 <body>
 
+  <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+?>
+  
 <?php 
 // Thông tin kết nối đến SQL Server
 $servername = "database-clound.database.windows.net";
