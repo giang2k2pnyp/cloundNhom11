@@ -46,7 +46,7 @@
 <script src="notification.js"></script>
 </head>
   
-</body>
+<body>
 <div class="container mt-3 mb-3">
   <h2 style="color: #03efd1;font-size: -webkit-xxx-large;
     font-family: cursive;">Book Book</h2>
