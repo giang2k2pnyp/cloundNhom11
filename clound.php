@@ -47,6 +47,101 @@
 </head>
   
 <body>
+
+<?php 
+// Thông tin kết nối đến SQL Server
+$servername = "database-clound.database.windows.net";
+$username = "clound";
+$password = "giang2k2pnyp.";
+$dbname = "clound";
+
+// Kết nối đến SQL Server
+$connectionInfo = array("Database" => $dbname, "UID" => $username, "PWD" => $password);
+$conn = sqlsrv_connect($servername, $connectionInfo);
+if ($conn === false) {
+    die(print_r(sqlsrv_errors(), true));
+}
+
+// Xử lý yêu cầu từ form
+if (isset($_POST['action'])) {
+    $action = $_POST['action'];
+
+    // Thêm sản phẩm
+    if ($action == 'add') {
+        $ten_san_pham = $_POST['tensach'];
+        $tacgia = $_POST['tacgia'];
+        $gia = $_POST['gia'];
+        $target_dir = "uploads/";
+        $target_file = $target_dir . basename($_FILES["img"]["name"]);
+        $uploadOk = 1;
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+        // Kiểm tra kích thước file
+        if ($_FILES["img"]["size"] > 500000) {
+            echo "<script> showNotification('Dung lượng file quá lớn!', 'error'); </script>";
+            $uploadOk = 0;
+        }
+
+        // Kiểm tra định dạng file
+        if (!in_array($imageFileType, ['jpg', 'png', 'jpeg', 'gif'])) {
+            echo "<script> showNotification('Định dạng file không hợp lệ!', 'error'); </script>";
+            $uploadOk = 0;
+        }
+
+        // Nếu mọi thứ ổn, thử upload file
+        if ($uploadOk && move_uploaded_file($_FILES["img"]["tmp_name"], $target_file)) {
+            $sql = "INSERT INTO book (tensach, img, tacgia, gia) VALUES (?, ?, ?, ?)";
+            $params = array($ten_san_pham, $target_file, $tacgia, $gia);
+            $stmt = sqlsrv_query($conn, $sql, $params);
+
+            if ($stmt) {
+                echo "<script> showNotification('Thêm sản phẩm thành công!'); </script>";
+            } else {
+                echo "<script> showNotification('Thêm sản phẩm thất bại!', 'error'); </script>";
+                print_r(sqlsrv_errors());
+            }
+        } else {
+            echo "<script> showNotification('Lỗi khi upload file!', 'error'); </script>";
+        }
+    }
+
+    // Xóa sản phẩm
+    if ($action == 'delete') {
+        $id = $_POST['id_book'];
+        $sql = "DELETE FROM book WHERE id_book = ?";
+        $params = array($id);
+        $stmt = sqlsrv_query($conn, $sql, $params);
+
+        if ($stmt) {
+            echo "<script> showNotification('Xóa sản phẩm thành công!', 'warning'); </script>";
+        } else {
+            echo "<script> showNotification('Lỗi khi xóa sản phẩm!', 'error'); </script>";
+            print_r(sqlsrv_errors());
+        }
+    }
+}
+
+// Truy vấn tất cả sản phẩm
+$sql = "SELECT * FROM book";
+$stmt = sqlsrv_query($conn, $sql);
+if ($stmt) {
+    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+        echo "Tên sách: " . htmlspecialchars($row['tensach']) . "<br>";
+        echo "Tác giả: " . htmlspecialchars($row['tacgia']) . "<br>";
+        echo "Giá: " . htmlspecialchars($row['gia']) . "<br>";
+        echo "<img src='" . htmlspecialchars($row['img']) . "' alt='Hình ảnh sách'><br>";
+        echo "<hr>";
+    }
+} else {
+    echo "<script> showNotification('Lỗi khi truy vấn sản phẩm!', 'error'); </script>";
+    print_r(sqlsrv_errors());
+}
+
+// Đóng kết nối
+sqlsrv_close($conn);
+?>
+
+  
 <div class="container mt-3 mb-3">
   <h2 style="color: #03efd1;font-size: -webkit-xxx-large;
     font-family: cursive;">Book Book</h2>
