@@ -4,19 +4,6 @@
 <title>Book Book</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 
-<?php 
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "clound";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if (isset($_POST['action'])) {
-    $action = $_POST['action'];
-  
-?>
 <style>
   body {
     /* background: linear-gradient(135deg, #9c9db7 0%, #2c2c54 100%); */
@@ -62,9 +49,33 @@ if (isset($_POST['action'])) {
 
 </head>
 <body>
+
+    <?php 
+
+$servername = "localhost"; // SQL Server thường là localhost hoặc tên server cụ thể
+$username = "sa"; // Thông thường là 'sa' hoặc tài khoản khác
+$password = ""; // Mật khẩu của SQL Server
+$dbname = "clound";
+
+// Kết nối đến SQL Server
+$connectionInfo = array("Database" => $dbname, "UID" => $username, "PWD" => $password);
+$conn = sqlsrv_connect($servername, $connectionInfo);
+
+if ($conn === false) {
+    die(print_r(sqlsrv_errors(), true));
+}
+
+if (isset($_POST['action'])) {
+    $action = $_POST['action'];
+    
+    // Xử lý các hành động tương tự như trong code MySQL
+}
+?>
+
+    
 <?php
-  // Thêm sản phẩm
-  if ($action == 'add') {
+// Thêm sản phẩm
+if ($action == 'add') {
     $ten_san_pham = $_POST['nameBook'];
     $tacgia = $_POST['nameTG'];
     $gia = $_POST['price'];
@@ -73,55 +84,89 @@ if (isset($_POST['action'])) {
     $target_dir = "uploads/"; 
     $target_file = $target_dir . basename($_FILES["img"]["name"]);
     $uploadOk = 1;
-    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-  // Kiểm tra kích thước file
-  if ($_FILES["img"]["size"] > 500000) {
-    echo "<script> showNotification('Dung lượng file quá lớn!','error'); </script>";
-    $uploadOk = 0;
-  }
+    // Kiểm tra kích thước file
+    if ($_FILES["img"]["size"] > 500000) {
+        echo "<script> showNotification('Dung lượng file quá lớn!','error'); </script>";
+        $uploadOk = 0;
+    }
 
-  // Cho phép các định dạng file nhất định
-  if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-  && $imageFileType != "gif" ) {
-    echo "<script> showNotification('Error','error'); </script>";
-    $uploadOk = 0;
-  }
+    // Cho phép các định dạng file nhất định
+    if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+        echo "<script> showNotification('Định dạng file không hợp lệ!','error'); </script>";
+        $uploadOk = 0;
+    }
 
-  // Kiểm tra nếu $uploadOk = 0 thì có lỗi xảy ra
-  if ($uploadOk == 0) {
-    echo "Sorry, your file was not uploaded.";
-  // Nếu mọi thứ đều ổn, thử upload file
-  } else {
-    if (move_uploaded_file($_FILES["img"]["tmp_name"], $target_file)) {
-      $sql = "INSERT INTO book (tensach, img, tacgia, gia) VALUES ('$ten_san_pham', '$target_file', '$tacgia', '$gia')";
-
-      if ($conn->query($sql) === TRUE) {
-        echo "<script> showNotification('Thêm sản phẩm thành công!'); </script>";
-      } else {
-        echo "<script> showNotification('!', 'error'); </script> " . $sql . "<br>" . $conn->error;
-      }
+    // Kiểm tra nếu $uploadOk = 0 thì có lỗi xảy ra
+    if ($uploadOk == 0) {
+        echo "Sorry, your file was not uploaded.";
     } else {
-      echo "<script> showNotification('Error!','error'); </script>";
+        // Nếu mọi thứ đều ổn, thử upload file
+        if (move_uploaded_file($_FILES["img"]["tmp_name"], $target_file)) {
+            // Tạo truy vấn INSERT với SQL Server sử dụng prepared statement
+            $sql = "INSERT INTO book (tensach, img, tacgia, gia) VALUES (?, ?, ?, ?)";
+            $params = array($ten_san_pham, $target_file, $tacgia, $gia);
+
+            // Chuẩn bị câu truy vấn
+            $stmt = sqlsrv_query($conn, $sql, $params);
+
+            // Kiểm tra xem truy vấn có thực thi thành công không
+            if ($stmt) {
+                echo "<script> showNotification('Thêm sản phẩm thành công!'); </script>";
+            } else {
+                echo "<script> showNotification('Thêm sản phẩm thất bại!', 'error'); </script>";
+                print_r(sqlsrv_errors()); // In ra lỗi nếu có
+            }
+        } else {
+            echo "<script> showNotification('Lỗi khi upload file!','error'); </script>";
+        }
     }
-  }
 }
-    // Xóa sản phẩm
-    if ($action == 'delete') {
-      $id = $_POST['id'];
-  
-      $sql = "DELETE FROM book WHERE id_book='$id'";
-  
-      if ($conn->query($sql) === TRUE) {
-        echo "<script> showNotification('Xoa sản phẩm thành công!','warning'); </script>";
-      } else {
-        echo "Lỗi: " . $sql . "<br>" . $conn->error;
-      }
-    }
-  }
-  $sql = "SELECT * FROM book";
-  $result = $conn->query($sql);
 ?>
+
+<?php
+// Xóa sản phẩm
+if ($action == 'delete') {
+    $id = $_POST['id'];
+
+    // Tạo truy vấn DELETE với SQL Server
+    $sql = "DELETE FROM book WHERE id_book = ?";
+    $params = array($id);
+
+    // Chuẩn bị và thực thi câu truy vấn
+    $stmt = sqlsrv_query($conn, $sql, $params);
+
+    if ($stmt) {
+        echo "<script> showNotification('Xóa sản phẩm thành công!', 'warning'); </script>";
+    } else {
+        echo "<script> showNotification('Lỗi khi xóa sản phẩm!', 'error'); </script>";
+        print_r(sqlsrv_errors()); // In ra lỗi nếu có
+    }
+}
+
+// Truy vấn tất cả các sản phẩm
+$sql = "SELECT * FROM book";
+$stmt = sqlsrv_query($conn, $sql);
+
+// Kiểm tra và xử lý kết quả
+if ($stmt) {
+    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+        // Xử lý kết quả, hiển thị thông tin sách
+        echo "Tên sách: " . $row['tensach'] . "<br>";
+        echo "Tác giả: " . $row['tacgia'] . "<br>";
+        echo "Giá: " . $row['gia'] . "<br>";
+        echo "<img src='" . $row['img'] . "' alt='Hình ảnh sách'><br>";
+        echo "<hr>";
+    }
+} else {
+    echo "<script> showNotification('Lỗi khi truy vấn sản phẩm!', 'error'); </script>";
+    print_r(sqlsrv_errors()); // In ra lỗi nếu có
+}
+?>
+
+
+    
 <div class="container mt-3 mb-3">
 <h2 style="color: #03efd1;font-size: -webkit-xxx-large;
     font-family: cursive;">Book Book</h2>
