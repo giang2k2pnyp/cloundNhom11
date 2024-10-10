@@ -52,7 +52,7 @@
 
     <?php 
 
-$servername = "localhost"; // SQL Server thường là localhost hoặc tên server cụ thể
+$servername = "database-clound.database.windows.net"; // SQL Server thường là localhost hoặc tên server cụ thể
 $username = "clound"; // Thông thường là 'sa' hoặc tài khoản khác
 $password = "giang2k2pnyp."; // Mật khẩu của SQL Server
 $dbname = "clound";
