@@ -53,8 +53,8 @@
     <?php 
 
 $servername = "localhost"; // SQL Server thường là localhost hoặc tên server cụ thể
-$username = "sa"; // Thông thường là 'sa' hoặc tài khoản khác
-$password = ""; // Mật khẩu của SQL Server
+$username = "clound"; // Thông thường là 'sa' hoặc tài khoản khác
+$password = "giang2k2pnyp."; // Mật khẩu của SQL Server
 $dbname = "clound";
 
 // Kết nối đến SQL Server
@@ -76,9 +76,9 @@ if (isset($_POST['action'])) {
 <?php
 // Thêm sản phẩm
 if ($action == 'add') {
-    $ten_san_pham = $_POST['nameBook'];
-    $tacgia = $_POST['nameTG'];
-    $gia = $_POST['price'];
+    $ten_san_pham = $_POST['tensach'];
+    $tacgia = $_POST['tacgia'];
+    $gia = $_POST['gia'];
 
     // Xử lý upload hình ảnh
     $target_dir = "uploads/"; 
