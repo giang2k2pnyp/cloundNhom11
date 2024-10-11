@@ -47,7 +47,7 @@ ini_set('display_errors', 1);
 // Thông tin kết nối đến SQL Server
 $servername = "database-clound.database.windows.net";
 $username = "clound";
-$password = "giang2k2pnyp.";
+$password = "giang123@";
 $dbname = "clound";
 
 // Kết nối đến SQL Server
